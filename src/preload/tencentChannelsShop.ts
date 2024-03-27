@@ -245,6 +245,41 @@ function getSPUSaleShowSessionId(spuId) {
   })
 }
 
+async function getSeatCount(showId, sessionId) {
+
+  let resData = {
+    sessionId: sessionId,
+    planCountMaps: {}
+  }
+
+  const headers = {
+    'User-Agent': 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.75 Mobile Safari/537.36',
+    'Content-Type': 'application/json'
+  };
+  const url = `https://m.piaoxingqiu.com/cyy_gatewayapi/show/pub/v3/show/${showId}/show_session/${sessionId}/seat_plans_dynamic_data`;
+  try {
+    const response = await fetch(url, {
+      headers: headers
+    });
+    const data = await response.json();
+    if (data.statusCode === 200) {
+      data.data.seatPlans.map(plan => {
+        resData.planCountMaps[plan.seatPlanId] = plan.canBuyCount
+      })
+
+    } else {
+      throw new Error("getSeatCount异常:" + JSON.stringify(data));
+    }
+
+    return resData
+  }
+  catch (error) {
+    console.error("getSeatCount异常:" + error);
+    return [];
+  }
+}
+
+
 function getSPUSaleShowSeatPlans(spuId) {
   return new Promise((r, j) => {
     fetch(
@@ -275,12 +310,19 @@ function getSPUSaleShowSeatPlans(spuId) {
         credentials: "include",
       }
     ).then(res => res.json())
-      .then(res => {
+      .then(async (res) => {
         if (res.statusCode === 200) {
           if (!spuMap[spuId]) {
             spuMap[spuId] = {}
           }
 
+          let remainingTicketCountMap = {
+
+          }
+          const allCount = await Promise.all(res.data.map(session => getSeatCount(spuId, session.bizShowSessionId)))
+          allCount.map(i => {
+            remainingTicketCountMap[i.sessionId] = i.planCountMaps
+          })
           const sessionList = res.data.map(session => {
             return {
               sessionName: session.sessionName,
@@ -290,6 +332,7 @@ function getSPUSaleShowSeatPlans(spuId) {
               beginDateTimeFormat: new Date(session.beginDateTime),
               seatPlans: session.seatPlans.map(plan => {
                 return {
+                  count: remainingTicketCountMap[session.bizShowSessionId][plan.seatPlanId],
                   originalPrice: plan.originalPrice,
                   seatPlanName: plan.seatPlanName,
                   seatPlanId: plan.seatPlanId
@@ -463,13 +506,10 @@ let side = null
 let leftSide = null
 async function getPreCreateOrderInfo(params = {}) {
   let { spuId, startTime, price } = params
-  const detailURL = 'https://m.piaoxingqiu.com/content';
   if (!spuId) {
-    if (window.location.href.includes(detailURL)) {
-      for (let [key, value] of new URLSearchParams(window.location.href)) {
-        if (key.includes('showId')) {
-          spuId = value;
-        }
+    for (let [key, value] of new URLSearchParams(window.location.href)) {
+      if (key.includes('showId')) {
+        spuId = value;
       }
     }
 
@@ -543,6 +583,7 @@ async function getPreCreateOrderInfo(params = {}) {
 <div><b>id</b> : ${plan.seatPlanId}</div>
 <div><b>名称</b> : ${plan.seatPlanName}</div>
 <div><b>价格</b> : ${plan.originalPrice}</div>
+<div><b>余票</b> : ${plan.count}</div>
 <br />
 `
       planDom.addEventListener('click', function () {
@@ -857,7 +898,7 @@ function actionCreateOrder(params, resultCallback) {
   let data = {
     "src": "WEB", // 固定值
     "ver": "4.0.13-20240223084920", // 固定值
-    "addressParam": { "addressId": addressId || "" }, // 半定值，提前建好地址，并获取好 addressId
+    "addressParam": addressId ? { "addressId": addressId || "" } : {}, // 半定值，提前建好地址，并获取好 addressId
     "locationParam": { "locationCityId": 4401 }, // 定值，城市 id
     "paymentParam": { "totalAmount": String(totalAmount), "payAmount": String(totalAmount) }, // 总价格，计算得出
     "priceItemParam": [ // 价格明细
