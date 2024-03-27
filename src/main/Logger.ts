@@ -1,63 +1,63 @@
-import { VERSION } from './common'
+// import { VERSION } from './common'
 type LogOrigin = 'main' | 'preload' | 'renderer'
 
-/**
- * @description: 时间戳格式化
- * @param {string} fmt 格式 yyyy-MM-dd HH-mm-ss
- * @return {stirng} 格式化时间字符串
- */
-const format = function (fmt: string = 'yyyy-MM-dd HH:mm:ss:S') {
-  const date = new Date()
-  const o: any = {
-    'M+': date.getMonth() + 1, // 月份
-    'd+': date.getDate(), // 日
-    'H+': date.getHours(), // 小时
-    'm+': date.getMinutes(), // 分
-    's+': date.getSeconds(), // 秒
-    'q+': Math.floor((date.getMonth() + 3) / 3), // 季度
-    S: date.getMilliseconds() // 毫秒
-  }
-  if (/(y+)/.test(fmt))
-    fmt = fmt.replace(RegExp.$1, (date.getFullYear() + '').substr(4 - RegExp.$1.length))
-  for (var k in o)
-    if (new RegExp('(' + k + ')').test(fmt))
-      fmt = fmt.replace(
-        RegExp.$1,
-        RegExp.$1.length == 1 ? o[k] : ('00' + o[k]).substr(('' + o[k]).length)
-      )
-  return fmt
-}
+// /**
+//  * @description: 时间戳格式化
+//  * @param {string} fmt 格式 yyyy-MM-dd HH-mm-ss
+//  * @return {stirng} 格式化时间字符串
+//  */
+// const format = function (fmt: string = 'yyyy-MM-dd HH:mm:ss:S') {
+//   const date = new Date()
+//   const o: any = {
+//     'M+': date.getMonth() + 1, // 月份
+//     'd+': date.getDate(), // 日
+//     'H+': date.getHours(), // 小时
+//     'm+': date.getMinutes(), // 分
+//     's+': date.getSeconds(), // 秒
+//     'q+': Math.floor((date.getMonth() + 3) / 3), // 季度
+//     S: date.getMilliseconds() // 毫秒
+//   }
+//   if (/(y+)/.test(fmt))
+//     fmt = fmt.replace(RegExp.$1, (date.getFullYear() + '').substr(4 - RegExp.$1.length))
+//   for (var k in o)
+//     if (new RegExp('(' + k + ')').test(fmt))
+//       fmt = fmt.replace(
+//         RegExp.$1,
+//         RegExp.$1.length == 1 ? o[k] : ('00' + o[k]).substr(('' + o[k]).length)
+//       )
+//   return fmt
+// }
 
 const isObject = (data: any): boolean => Object.prototype.toString.call(data) === '[object Object]'
 
-function getLocalIP() {
-  const os = require('os')
-  const osType = os.type() //系统类型
-  const netInfo = os.networkInterfaces() //网络信息
-  let ip = ''
-  if (osType === 'Windows_NT') {
-    for (let dev in netInfo) {
-      //win7的网络信息中显示为本地连接，win10显示为以太网
-      if (dev === '本地连接' || dev === '以太网') {
-        for (let j = 0; j < netInfo[dev].length; j++) {
-          if (netInfo[dev][j].family === 'IPv4') {
-            ip = netInfo[dev][j].address
-            break
-          }
-        }
-      }
-    }
-  } else if (osType === 'Linux') {
-    ip = netInfo.eth0[0].address
-  } else if (osType === 'Darwin') {
-    // mac操作系统
-    // ip = netInfo.eth0[0].address;
-  } else {
-    // 其他操作系统
-  }
+// function getLocalIP() {
+//   const os = require('os')
+//   const osType = os.type() //系统类型
+//   const netInfo = os.networkInterfaces() //网络信息
+//   let ip = ''
+//   if (osType === 'Windows_NT') {
+//     for (let dev in netInfo) {
+//       //win7的网络信息中显示为本地连接，win10显示为以太网
+//       if (dev === '本地连接' || dev === '以太网') {
+//         for (let j = 0; j < netInfo[dev].length; j++) {
+//           if (netInfo[dev][j].family === 'IPv4') {
+//             ip = netInfo[dev][j].address
+//             break
+//           }
+//         }
+//       }
+//     }
+//   } else if (osType === 'Linux') {
+//     ip = netInfo.eth0[0].address
+//   } else if (osType === 'Darwin') {
+//     // mac操作系统
+//     // ip = netInfo.eth0[0].address;
+//   } else {
+//     // 其他操作系统
+//   }
 
-  return ip
-}
+//   return ip
+// }
 
 class Logger {
   static instance: Logger
@@ -114,7 +114,7 @@ class Logger {
 
   send(logData = {}, level = 'info') {
     const logContents = this.formatLogData(logData)
-    console.info(logContents)
+    console.info(logContents, level)
     return 1
   }
 }

@@ -114,7 +114,7 @@ onMounted(() => {
   background: #fff;
 
   .bookmark-item {
-    max-width: 130px;
+    max-width: 140px;
     width: fit-content;
     height: 32px;
     flex: 1;
@@ -128,10 +128,11 @@ onMounted(() => {
     cursor: pointer;
 
     .icon {
-      width: 14px;
-      height: 14px;
+      width: 20px;
+      height: 20px;
       margin-right: 8px;
       flex: none;
+      background: #fff;
     }
 
     .label {

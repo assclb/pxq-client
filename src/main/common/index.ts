@@ -2,4 +2,4 @@ export enum BROWSER_NAME_MAP {
   MAIN = 'MAIN'
 }
 
-export const VERSION = '1.1.3'
+export const VERSION = '0.0.0'

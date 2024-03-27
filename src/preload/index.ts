@@ -1,6 +1,5 @@
 import { contextBridge, ipcRenderer } from 'electron'
 // import { is } from '@electron-toolkit/utils'
-import JSEncrypt from 'jsencrypt'
 const path = require('path')
 
 

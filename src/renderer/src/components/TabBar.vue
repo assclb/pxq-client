@@ -193,8 +193,8 @@ const icon = reactive({
       -webkit-app-region: no-drag;
 
       .icon {
-        width: 16px;
-        height: 16px;
+        width: 20px;
+        height: 20px;
       }
 
       .label {
@@ -202,7 +202,7 @@ const icon = reactive({
         font-size: 14px;
         font-family: PingFang SC;
         line-height: 22px;
-        margin: 0 8px;
+        margin: 0 4px;
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;

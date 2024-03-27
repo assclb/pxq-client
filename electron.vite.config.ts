@@ -1,5 +1,6 @@
 import { resolve } from 'path'
 import { defineConfig, externalizeDepsPlugin } from 'electron-vite'
+import obfuscator from 'rollup-plugin-obfuscator';
 import vue from '@vitejs/plugin-vue'
 
 export default defineConfig({
@@ -7,7 +8,7 @@ export default defineConfig({
     plugins: [externalizeDepsPlugin()]
   },
   preload: {
-    plugins: [externalizeDepsPlugin()],
+    plugins: [externalizeDepsPlugin(), obfuscator()],
     build: {
       rollupOptions: {
         input: {

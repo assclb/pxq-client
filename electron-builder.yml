@@ -1,6 +1,6 @@
 appId: com.ty.channels
 productName: "票星球客户端"
-copyright: "广州探域客户端组"
+copyright: "ocass"
 directories:
   buildResources: build
 files:
